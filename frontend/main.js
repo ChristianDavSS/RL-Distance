@@ -1,4 +1,4 @@
-//import cytoscape from "cytoscape";
+import cytoscape from "cytoscape"
 
 var cy = cytoscape({
   container: document.getElementById("cy"),
