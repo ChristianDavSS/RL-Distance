@@ -5,7 +5,7 @@ from domain.rl_model import RLModel
 app = FastAPI()
 
 @app.get("/")
-def get_path(data: list[dict], source: str, dest: str) -> list[int]:
+def get_path(data: list[dict], source: str, dest: str) -> list[str]:
     """
     GET Endpoint: Receives the whole data the user created and
     manages to apply the RL algorithm
