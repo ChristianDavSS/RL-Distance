@@ -1,20 +1,78 @@
 <!doctype html>
-<html>
+<html lang="es">
   <head>
-    <title>Grafo con Cytoscape</title>
-    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
-    <style>
-      #cy {
-        width: 600px;
-        height: 400px;
-        border: 1px solid #ccc;
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proyecto Q-Learning</title>
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <div id="cy"></div>
-    <button id="hola">que</button>
+    <div class="main-container">
+      <header>
+        <h1>Visualizador Q-Learning</h1>
+        <p>Simulación de Distancias utilizando Reinforcement Learning -</p>
+      </header>
 
-    <script src="main.js"></script>
+      <section class="controls-panel">
+        <div class="input-group">
+          <label for="state-select">Estado Origen:</label>
+          <select id="state-select" name="state">
+            <option value="" disabled selected>
+              Selecciona un estado origen
+            </option>
+            <option value="A">Nodo A</option>
+            <option value="B">Nodo B</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="action-select">Estado Destino:</label>
+          <select id="action-select" name="action">
+            <option value="" disabled selected>
+              Selecciona un estado destino
+            </option>
+            <option value="A">Nodo A</option>
+            <option value="B">Nodo B</option>
+          </select>
+        </div>
+
+        <div class="tooltip-container">
+          <button id="add-node-btn" class="primary-btn">+ Agregar Nodo</button>
+          <span class="tooltip-text"
+            >Crea un nuevo nodo en el mapa para entrenar al modelo</span
+          >
+        </div>
+      </section>
+
+      <main id="graph-container" class="empty-canvas">
+        <div id="cy"></div>
+      </main>
+    </div>
+
+    <script>
+      const originSelect = document.getElementById("state-select");
+      const destSelect = document.getElementById("action-select");
+
+      originSelect.addEventListener("change", function () {
+        const selectedVal = this.value;
+
+        if (destSelect.value === selectedVal) {
+          destSelect.value = "";
+        }
+
+        Array.from(destSelect.options).forEach((option) => {
+          if (option.value === selectedVal) {
+            option.disabled = true;
+            option.innerText = `(No puedes seleccionar el mismo nodo)`;
+          } else {
+            option.disabled = false;
+            if (option.value) option.innerText = `Ir a Nodo ${option.value}`;
+          }
+        });
+      });
+    </script>
+    <!--Sorry for not be able to do it locally i have the stupid :C-->
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>
