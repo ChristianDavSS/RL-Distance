@@ -12,8 +12,10 @@ class RLModel:
         
         
     def __set_dest_row(self, matrix: list[list[int]]) -> np.ndarray:
+        # from vanilla matrix to np matrix
         matrix = np.array(matrix)
         
+        # set the highest reward on the row of the desired state
         matrix[self.targetIdx, np.array(matrix[self.targetIdx]).argmax()] = 100
         
         return matrix
@@ -33,11 +35,15 @@ class RLModel:
                 if R[current_state, j] > 0:
                     available_actions.append(j)
             
+            # choice a random action from the available actions
             current_action = random.choice(available_actions)
+            # the next state is the current action index
             next_state = current_action
+            # apply the formulas of TD
             TD = R[current_state, current_action] + (self.gamma * Q[next_state, np.argmax(Q[next_state,])]) - Q[current_state, current_action]
             Q[current_state, current_action] = Q[current_state, current_action] + self.alpha*TD
 
+            # update the current state index
             current_state = current_action
             
     

@@ -49,9 +49,13 @@ class Graph:
         :type empty_matrix: list[list[int]]
         """
         matrix = self._create_matrix()
+        print("EDGES -> ", self.edges)
         
         for subdict in self.edges:
+            # get the source and target from the dict
             key, value = subdict.get("source"), subdict.get("target")
+            # set the 1 in the coordinates (both directions)
             matrix[self.nodes.index(key)][self.nodes.index(value)] = 1
+            matrix[self.nodes.index(value)][self.nodes.index(key)] = 1
         
         return matrix
