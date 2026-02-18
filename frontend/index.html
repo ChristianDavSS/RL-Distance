@@ -10,7 +10,7 @@
     <div class="main-container">
       <header>
         <h1>Visualizador Q-Learning</h1>
-        <p>Simulación de Distancias utilizando Reinforcement Learning -</p>
+        <p>Simulación de Distancias utilizando Reinforcement Learning</p>
       </header>
 
       <section class="controls-panel">
@@ -20,9 +20,7 @@
             <option value="" disabled selected>
               Selecciona un estado origen
             </option>
-            <option value="A">Nodo A</option>
-            <option value="B">Nodo B</option>
-          </select>
+            </select>
         </div>
 
         <div class="input-group">
@@ -31,47 +29,20 @@
             <option value="" disabled selected>
               Selecciona un estado destino
             </option>
-            <option value="A">Nodo A</option>
-            <option value="B">Nodo B</option>
-          </select>
+             </select>
         </div>
 
         <div class="tooltip-container">
           <button id="add-node-btn" class="primary-btn">+ Agregar Nodo</button>
-          <span class="tooltip-text"
-            >Crea un nuevo nodo en el mapa para entrenar al modelo</span
-          >
+          <span class="tooltip-text"> Crea un nuevo nodo en el centro de tu vista </span>
         </div>
       </section>
 
       <main id="graph-container" class="empty-canvas">
         <div id="cy"></div>
       </main>
-      <button id="hey">hey</button>
     </div>
 
-    <script>
-      const originSelect = document.getElementById("state-select");
-      const destSelect = document.getElementById("action-select");
-
-      originSelect.addEventListener("change", function () {
-        const selectedVal = this.value;
-
-        if (destSelect.value === selectedVal) {
-          destSelect.value = "";
-        }
-
-        Array.from(destSelect.options).forEach((option) => {
-          if (option.value === selectedVal) {
-            option.disabled = true;
-            option.innerText = `(No puedes seleccionar el mismo nodo)`;
-          } else {
-            option.disabled = false;
-            if (option.value) option.innerText = `Ir a Nodo ${option.value}`;
-          }
-        });
-      });
-    </script>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

@@ -49,7 +49,6 @@ class Graph:
         :type empty_matrix: list[list[int]]
         """
         matrix = self._create_matrix()
-        print("EDGES -> ", self.edges)
         
         for subdict in self.edges:
             # get the source and target from the dict

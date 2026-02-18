@@ -20,15 +20,6 @@ def get_path(request: PathRequest) -> list[str]:
     GET Endpoint: Receives the whole data the user created and
     manages to apply the RL algorithm
     """
-    # get the nodes and edges
-    # data = [
-    #     {"data": {"id": "a"}},
-    #     {"data": {"id": "b"}},
-    #     {"data": {"id": "c"}},
-    #     {"data": {"source": "a", "target": "b"}},
-    #     {"data": {"source": "b", "target": "c"}},
-    #     {"data": {"source": "c", "target": "a"}}
-    # ]
     # Instanciate the model
     model = RLModel(Graph(request.data, request.source, request.dest))
     
