@@ -40,6 +40,68 @@ var cy = cytoscape({
 let labels = ["a", "b", "c", "d", "e", "f", "g"];
 let added = ["a", "b", "c"];
 
+
+const originSelect = document.getElementById("state-select");
+const destSelect = document.getElementById("action-select");
+
+// updates the dropdown options based on the current nodes in the graph.
+function updateSelectOptions() {
+  const nodes = cy.nodes();
+  const currentOrigin = originSelect.value;
+  const currentDest = destSelect.value;
+
+  originSelect.innerHTML = '<option value="" disabled selected>Selecciona un estado origen</option>';
+  destSelect.innerHTML = '<option value="" disabled selected>Selecciona un estado destino</option>';
+
+  nodes.forEach((node) => {
+    const id = node.id();
+    
+    // origin select
+    const optOrigin = document.createElement("option");
+    optOrigin.value = id;
+    optOrigin.innerText = `Nodo ${id.toUpperCase()}`;
+    originSelect.appendChild(optOrigin);
+
+    // destination select
+    const optDest = document.createElement("option");
+    optDest.value = id;
+    optDest.innerText = `Ir a Nodo ${id.toUpperCase()}`;
+    destSelect.appendChild(optDest);
+  });
+
+  if (currentOrigin) originSelect.value = currentOrigin;
+  if (currentDest) destSelect.value = currentDest;
+
+  validateSelection();
+}
+
+ // validates origen and destino are not the same.
+
+function validateSelection() {
+  const selectedOrigin = originSelect.value;
+
+  Array.from(destSelect.options).forEach((option) => {
+    if (option.disabled && option.value === "") return;
+
+    if (option.value === selectedOrigin) {
+      option.disabled = true;
+      option.innerText = `(No puedes seleccionar el mismo nodo)`;
+      if (destSelect.value === selectedOrigin) {
+        destSelect.value = "";
+      }
+    } else {
+      option.disabled = false;
+      option.innerText = `Ir a Nodo ${option.value.toUpperCase()}`;
+    }
+  });
+}
+
+originSelect.addEventListener("change", validateSelection);
+
+updateSelectOptions();
+
+
+
 document.getElementById("add-node-btn").addEventListener("click", () => {
   //while (true) {
   let newNode;
@@ -74,13 +136,25 @@ document.getElementById("add-node-btn").addEventListener("click", () => {
     }
   }
 
+  // we calculate center of the current viewport to place the new node within view
+  const pan = cy.pan();
+  const zoom = cy.zoom();
+  const w = cy.width();
+  const h = cy.height();
+  
+  // convert screen center to model coordinates
+  const modelX = (w / 2 - pan.x) / zoom;
+  const modelY = (h / 2 - pan.y) / zoom;
+
+
   cy.add({
     group: "nodes",
     data: {
       id: `${added[added.length - 1]}`,
       label: `${added[added.length - 1]}`,
     },
-  });
+    position: { x: modelX, y: modelY }
+  }); updateSelectOptions();
 
   //console.log(labels.findIndex((element) => element === ultimo));
 
