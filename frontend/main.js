@@ -50,18 +50,29 @@ const extractElements = async (source, dest) => {
   })
 
   let { data } = await axios.post("http://127.0.0.1:8000/", {data: elements, source: source, dest: dest})
-  console.log(data)
+  return data
 }
 
 const originSelect = document.getElementById("state-select");
 const destSelect = document.getElementById("action-select");
 
-destSelect.addEventListener("change", () => {
+const resetToDefault = () => {
+  added.forEach(e => {
+    cy.$id(e).style("background-color", "#0074D9")
+  })
+}
+
+destSelect.addEventListener("change", async () => {
   if (originSelect.value == "") {  
    alert("Ingresa un origen antes!")
    return; 
   }
-  extractElements(originSelect.value, destSelect.value)
+  let data = await extractElements(originSelect.value, destSelect.value)
+
+  resetToDefault()
+  data.forEach(e => {
+    cy.$id(e).style("background-color", "red")
+  })
 })
 
 // updates the dropdown options based on the current nodes in the graph.

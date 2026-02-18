@@ -48,14 +48,23 @@ class RLModel:
             
     
     def __get_path(self, Q: np.ndarray) -> list[str]:
+        # set a starting index
         idx = self.startIdx
-        path = [self.graph.nodes[idx]]
+        # list to save the path nodes
+        path: list[str] = list()
         
+        # while the current idx isn't the same as the target
         while idx != self.targetIdx:
-            idx = Q[idx].argmax()
+            # if the current node is already in the path, we're on a loop... :(
+            if self.graph.nodes[idx] in path:
+                return []
+            
+            # append the current node to the path and get the index of the next state
             path.append(self.graph.nodes[idx])
+            idx = Q[idx].argmax()
 
-        return path
+        # return the path
+        return path + [self.graph.nodes[idx]]
     
     def execute(self) -> list[str]:
         # create the rewards matrix
