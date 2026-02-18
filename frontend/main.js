@@ -37,43 +37,25 @@ var cy = cytoscape({
   },
 });
 
-let labels = ["a", "b", "c", "d", "e", "f", "g"];
+// define a initial queue
+let queue = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+// define a set of the starter words
 let added = ["a", "b", "c"];
+// remove the starter words from the queue
+queue = queue.filter(e => !added.includes(e))
+// add the starter works modified to the end of the queue
+  queue.push(...added.map(e => e + e[0]))
 
 document.getElementById("add-node-btn").addEventListener("click", () => {
-  //while (true) {
-  let newNode;
-  let level = 0;
-  let lastNode = added[added.length - 1];
+  // add the first element to the 'added' array
+  added.push(queue[0])
 
-  while (true) {
-    // index of the letter of the last addedNode
-    let letterLast = labels.findIndex((element) => element === lastNode[level]);
+  // get and remove the first element from the queue
+  let e = queue.shift()
+  // set the removed element to the queue
+  queue.push(e + e[0])
 
-    // if new labels run out and there is no next lebel in the last node (str.length)
-    if (letterLast === labels.length - 1 && level + 1 >= lastNode.length) {
-      level += 1;
-      let toAdd = "";
-      for (let i = 0; i <= level; i++) {
-        toAdd += "a";
-      }
-      added.push(toAdd);
-      break;
-
-      //if labels run out but there are more letters in the last node
-    } else if (letterLast === labels.length - 1) {
-      lastNode = lastNode.split("");
-      lastNode[level] = "a";
-      lastNode = lastNode.join("");
-      level += 1;
-    } else {
-      newNode = lastNode.split("");
-      newNode[level] = labels[letterLast + 1];
-      added.push(newNode.join(""));
-      break;
-    }
-  }
-
+  // add the node in the 'added' array
   cy.add({
     group: "nodes",
     data: {
@@ -81,11 +63,6 @@ document.getElementById("add-node-btn").addEventListener("click", () => {
       label: `${added[added.length - 1]}`,
     },
   });
-
-  //console.log(labels.findIndex((element) => element === ultimo));
-
-  console.log("agregado", added);
-  //}
 });
 
 let toConnect = [];
