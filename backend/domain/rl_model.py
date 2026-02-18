@@ -42,12 +42,12 @@ class RLModel:
             
     
     def __get_path(self, Q: np.ndarray) -> list[str]:
-        path = list()
         idx = self.startIdx
+        path = [self.graph.nodes[idx]]
         
         while idx != self.targetIdx:
-            path.append(self.graph.nodes[idx])
             idx = Q[idx].argmax()
+            path.append(self.graph.nodes[idx])
 
         return path
     

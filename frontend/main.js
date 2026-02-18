@@ -49,7 +49,7 @@ const extractElements = async () => {
     elements.push(e._private.data)
   })
 
-  let r = await axios.post("http://127.0.0.1:8000/", {data: elements, source: "a", dest: "f"})
+  let r = await axios.post("http://127.0.0.1:8000/", {data: elements, source: "a", dest: "g"})
   console.log(r)
 }
 
