@@ -20,9 +20,8 @@ class Graph:
         
         # Iterate over the data to fill up the nodes and edges
         for value in data:
-            value = value.get("data")
             # if the dict doesn't contains a key 'id' we set -1 as a value
-            node = value.get("id", -1)
+            node = value.get("label", -1)
             if node != -1:
                 nodes.append(node)
             else:

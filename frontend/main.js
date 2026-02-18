@@ -1,13 +1,14 @@
 import cytoscape from "cytoscape"
+import axios from "axios";
 
 var cy = cytoscape({
   container: document.getElementById("cy"),
 
   elements: [
     // Nodos
-    { group: "nodes", data: { id: "a", label: "A" } },
-    { group: "nodes", data: { id: "b", label: "B" } },
-    { group: "nodes", data: { id: "c", label: "C" } },
+    { group: "nodes", data: { id: "a", label: "a" } },
+    { group: "nodes", data: { id: "b", label: "b" } },
+    { group: "nodes", data: { id: "c", label: "c" } },
 
     // Aristas
     { group: "edges", data: { source: "a", target: "b" } },
@@ -36,6 +37,25 @@ var cy = cytoscape({
     name: "grid",
   },
 });
+
+const extractElements = async () => {
+  /*
+  * extractElement arrow function used to extract the elements
+  * from the graph
+  */
+  let elements = []
+  let raw_elements = cy.elements()
+  raw_elements.forEach(e => {
+    elements.push(e._private.data)
+  })
+
+  let r = await axios.post("http://127.0.0.1:8000/", {data: elements, source: "a", dest: "f"})
+  console.log(r)
+}
+
+document.getElementById("hey").addEventListener("click", () => {
+  extractElements();
+})
 
 // define a initial queue
 let queue = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];

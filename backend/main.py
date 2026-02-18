@@ -1,11 +1,21 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from domain.graph import Graph
 from domain.rl_model import RLModel
+from domain.models import PathRequest
 
 app = FastAPI()
 
-@app.get("/")
-def get_path(data: list[dict], source: str, dest: str) -> list[str]:
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5174", "http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+@app.post("/")
+def get_path(request: PathRequest) -> list[str]:
     """
     GET Endpoint: Receives the whole data the user created and
     manages to apply the RL algorithm
@@ -20,7 +30,7 @@ def get_path(data: list[dict], source: str, dest: str) -> list[str]:
     #     {"data": {"source": "c", "target": "a"}}
     # ]
     # Instanciate the model
-    model = RLModel(Graph(data, source, dest))
+    model = RLModel(Graph(request.data, request.source, request.dest))
     
     # Return the execution of the algorithm
     return model.execute()
