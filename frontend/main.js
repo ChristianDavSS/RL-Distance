@@ -38,16 +38,22 @@ var cy = cytoscape({
   },
 });
 
+const formatElements = (raw_elements) => {
+  let elements = []
+  raw_elements.forEach(e => {
+    elements.push(e.data())
+  })
+
+  return elements
+}
+
 const extractElements = async (source, dest) => {
   /*
   * extractElement arrow function used to extract the elements
   * from the graph
   */
-  let elements = []
-  let raw_elements = cy.elements()
-  raw_elements.forEach(e => {
-    elements.push(e._private.data)
-  })
+ let raw_elements = cy.elements()
+ let elements = formatElements(raw_elements)
 
   let { data } = await axios.post("http://127.0.0.1:8000/", {data: elements, source: source, dest: dest})
   return data
@@ -56,9 +62,14 @@ const extractElements = async (source, dest) => {
 const originSelect = document.getElementById("state-select");
 const destSelect = document.getElementById("action-select");
 
-const resetToDefault = () => {
-  added.forEach(e => {
+const resetToDefault = (values) => {
+  values.forEach(e => {
     cy.$id(e).style("background-color", "#0074D9")
+  })
+
+  cy.edges().forEach(e => {
+    let id = e.data().id
+    cy.$id(id).style("line-color", "#aaa",)
   })
 }
 
@@ -69,9 +80,9 @@ destSelect.addEventListener("change", async () => {
   }
   let data = await extractElements(originSelect.value, destSelect.value)
 
-  resetToDefault()
+  resetToDefault(added)
   data.forEach(e => {
-    cy.$id(e).style("background-color", "red")
+    cy.$id(e).style("background-color", "red").style("line-color", "red")
   })
 })
 
@@ -199,7 +210,7 @@ cy.on("tap", "node", (e) => {
       });
       toConnect = [];
     } else {
-      console.log("Ya existe esa conecxion");
+      console.log("Ya existe esa conexión");
       toConnect = [];
     }
   }

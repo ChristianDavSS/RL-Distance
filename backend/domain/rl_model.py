@@ -47,7 +47,7 @@ class RLModel:
             current_state = current_action
             
     
-    def __get_path(self, Q: np.ndarray) -> list[str]:
+    def __get_path(self, Q: np.ndarray, edges: dict[str, str]) -> list[str]:
         # set a starting index
         idx = self.startIdx
         # list to save the path nodes
@@ -62,13 +62,20 @@ class RLModel:
             # append the current node to the path and get the index of the next state
             path.append(self.graph.nodes[idx])
             idx = Q[idx].argmax()
+            
+        path = path + [self.graph.nodes[idx]]
+            
+        # Loop through the path list and append the ID of the edges
+        for i in range(1, len(path)):
+            max_value, min_value = max(path[i], path[i-1]), min(path[i], path[i-1])
+            path.append(edges.get(f"{min_value}{max_value}"))
 
         # return the path
-        return path + [self.graph.nodes[idx]]
+        return path
     
     def execute(self) -> list[str]:
         # create the rewards matrix
-        R = self.graph._create_rewards_matrix()
+        R, edges = self.graph._create_rewards_matrix()
         # set the targeted row in the rewards matrix
         R = self.__set_dest_row(R)
         # Define the Q matrix (result)
@@ -76,5 +83,5 @@ class RLModel:
         # Execute the algorithm
         self.__execute_algorithm(R, Q)
         
-        return self.__get_path(Q)
+        return self.__get_path(Q, edges)
     

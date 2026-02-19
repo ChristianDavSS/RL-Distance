@@ -41,7 +41,7 @@ class Graph:
         return [[0] * n for _ in range(n)]
     
     
-    def _create_rewards_matrix(self) -> list[list[int]]:
+    def _create_rewards_matrix(self) -> tuple[list[list[int]], dict[str, str]]:
         """
         Creates the rewards matrix based on the nodes indexes
         
@@ -49,6 +49,7 @@ class Graph:
         :type empty_matrix: list[list[int]]
         """
         matrix = self._create_matrix()
+        edges: dict[str, str] = dict()
         
         for subdict in self.edges:
             # get the source and target from the dict
@@ -56,5 +57,9 @@ class Graph:
             # set the 1 in the coordinates (both directions)
             matrix[self.nodes.index(key)][self.nodes.index(value)] = 1
             matrix[self.nodes.index(value)][self.nodes.index(key)] = 1
+            
+            edge_id = subdict.get("id")
+            max_value, min_value = max(value, key), min(value, key)
+            edges.update({f"{min_value}{max_value}": edge_id})
         
-        return matrix
+        return matrix, edges
