@@ -79,7 +79,7 @@ const extractElements = (source, dest) => __awaiter(void 0, void 0, void 0, func
     raw_elements.forEach((e) => {
       elements.push(e.data());
     });
-    let { data } = yield axios.post("https://rl-distance-backend.vercel.app/", {
+    let { data } = yield axios.post("http://127.0.0.1:8000/", {
       data: elements,
       source: source,
       dest: dest,
