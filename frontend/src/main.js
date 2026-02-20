@@ -9,8 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import cytoscape, {} from "cytoscape";
 import axios from "axios";
+
 var cy = cytoscape({
     container: document.getElementById("cy"),
+    minZoom: 0.3, 
+    maxZoom: 3,   
     elements: [
         // Nodos
         { group: "nodes", data: { id: "a", label: "a" } },
@@ -41,6 +44,7 @@ var cy = cytoscape({
         name: "grid",
     },
 });
+
 const extractElements = (source, dest) => __awaiter(void 0, void 0, void 0, function* () {
     /*
      * extractElement arrow function used to extract the elements
@@ -58,8 +62,11 @@ const extractElements = (source, dest) => __awaiter(void 0, void 0, void 0, func
     });
     return data;
 });
+
 const originSelect = document.getElementById("state-select");
 const destSelect = document.getElementById("action-select");
+const nodeCountInput = document.getElementById("node-count-input");
+
 const resetToDefault = () => {
     added.forEach((e) => {
         cy.$id(e).style("background-color", "#0074D9");
@@ -69,6 +76,7 @@ const resetToDefault = () => {
         cy.$id(id).style("line-color", "#aaa");
     });
 };
+
 destSelect.addEventListener("change", () => __awaiter(void 0, void 0, void 0, function* () {
     if (originSelect.value == "") {
         alert("Ingresa un origen antes!");
@@ -80,6 +88,7 @@ destSelect.addEventListener("change", () => __awaiter(void 0, void 0, void 0, fu
         cy.$id(e).style("background-color", "red").style("line-color", "red");
     });
 }));
+
 // updates the dropdown options based on the current nodes in the graph.
 function updateSelectOptions() {
     const nodes = cy.nodes();
@@ -102,12 +111,13 @@ function updateSelectOptions() {
         optDest.innerText = `Ir a Nodo ${id.toUpperCase()}`;
         destSelect.appendChild(optDest);
     });
-    if (currentOrigin)
+    if (currentOrigin && cy.getElementById(currentOrigin).nonempty())
         originSelect.value = currentOrigin;
-    if (currentDest)
+    if (currentDest && cy.getElementById(currentDest).nonempty())
         destSelect.value = currentDest;
     validateSelection();
 }
+
 // validates origen and destino are not the same.
 function validateSelection() {
     const selectedOrigin = originSelect.value;
@@ -127,53 +137,42 @@ function validateSelection() {
         }
     });
 }
+
 originSelect.addEventListener("change", validateSelection);
 updateSelectOptions();
+
 // define a initial queue
 let queue = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
+    "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", 
+    "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
 ];
 // define a set of the starter words
 let added = ["a", "b", "c"];
+let reusableNodeIds = [];
+
 // remove the starter words from the queue
 queue = queue.filter((e) => !added.includes(e));
 // add the starter works modified to the end of the queue
 queue.push(...added.map((e) => e + e[0]));
+
 var addNodeButton = document.getElementById("add-node-btn");
 addNodeButton.addEventListener("click", () => {
-    // add the first element to the 'added' array
-    added.push(queue[0]);
-    // get and remove the first element from the queue
-    let e = queue.shift();
-    if (e) {
-        queue.push(e + e[0]);
+    // Max 100 nodes in graph
+    let currentNodesCount = cy.nodes().length;
+    let maxAllowed = 100 - currentNodesCount;
+    
+    if (maxAllowed <= 0) {
+        alert("pa que quieres mas de 100 nodos we");
+        return; 
     }
-    // set the removed element to the queue
+
+    let count = 1;
+    if (nodeCountInput) {
+        count = parseInt(nodeCountInput.value) || 1;
+    }
+    if (count > maxAllowed) count = maxAllowed;
+    if (count < 1) count = 1;
+
     // we calculate center of the current viewport to place the new node within view
     const pan = cy.pan();
     const zoom = cy.zoom();
@@ -182,16 +181,50 @@ addNodeButton.addEventListener("click", () => {
     // convert screen center to model coordinates
     const modelX = (w / 2 - pan.x) / zoom;
     const modelY = (h / 2 - pan.y) / zoom;
-    cy.add({
-        group: "nodes",
-        data: {
-            id: `${added[added.length - 1]}`,
-            label: `${added[added.length - 1]}`,
-        },
-        position: { x: modelX, y: modelY },
-    });
+
+    for (let i = 0; i < count; i++) {
+        let newNodeId;
+
+        if (reusableNodeIds.length > 0) {
+            newNodeId = reusableNodeIds.shift(); 
+            if (!added.includes(newNodeId)) {
+                added.push(newNodeId);
+            }
+        } else {
+            // add the first element to the 'added' array
+            added.push(queue[0]);
+            // get and remove the first element from the queue
+            let e = queue.shift();
+            if (e) {
+                queue.push(e + e[0]);
+            }
+            newNodeId = added[added.length - 1];
+        }
+
+        // Bodyblock Logic
+        let offsetX = 0;
+        let offsetY = 0;
+
+        if (count > 1) {
+            // Incremented multipliers for a more separated and cleaner view
+            const spread = Math.sqrt(count) * 40 + 50; 
+            offsetX = (Math.random() - 0.5) * spread * 2;
+            offsetY = (Math.random() - 0.5) * spread * 2;
+        }
+
+        cy.add({
+            group: "nodes",
+            data: {
+                id: `${newNodeId}`,
+                label: `${newNodeId}`,
+            },
+            position: { x: modelX + offsetX, y: modelY + offsetY },
+        });
+    }
+    
     updateSelectOptions();
 });
+
 let toConnect = [];
 cy.on("tap", "node", (e) => {
     const node = e.target;
@@ -223,4 +256,28 @@ cy.on("tap", "node", (e) => {
 cy.on("tap", "edge", (e) => {
     const clickeado = e.target;
     cy.remove(clickeado);
+});
+
+// 'cxttap' is the event for right-click or long-press
+cy.on('cxttap', 'node', function(evt){
+  const node = evt.target;
+  const nodeId = node.id();
+  
+  // Simple confirmation option
+  const confirmDelete = confirm(`Confirmas borrar el nodo ${nodeId}?`);
+  
+  if (confirmDelete) {
+      node.remove();
+      
+      reusableNodeIds.push(nodeId);
+      // queue fix
+      reusableNodeIds.sort((a, b) => {
+         if (a.length !== b.length) return a.length - b.length;
+         return a.localeCompare(b);
+      });
+
+      // update selects because a node is gone
+      updateSelectOptions();
+      console.log(`Nodo ${nodeId} eliminado.`);
+  }
 });
