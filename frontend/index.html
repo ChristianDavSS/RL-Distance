@@ -20,7 +20,7 @@
             <option value="" disabled selected>
               Selecciona un estado origen
             </option>
-            </select>
+          </select>
         </div>
 
         <div class="input-group">
@@ -29,18 +29,36 @@
             <option value="" disabled selected>
               Selecciona un estado destino
             </option>
-             </select>
+          </select>
         </div>
 
         <div class="tooltip-container">
           <button id="add-node-btn" class="primary-btn">+ Agregar Nodo</button>
-          <span class="tooltip-text"> Crea un nuevo nodo en el centro de tu vista </span>
+          <span class="tooltip-text">
+            Crea un nuevo nodo en el centro de tu vista
+          </span>
+        </div>
+
+        <div class="input-group">
+          <label>Nodos a añadir:</label>
+          <input id="nodes-number" type="number" value="1" min="1" />
         </div>
       </section>
 
       <main id="graph-container" class="empty-canvas">
         <div id="cy"></div>
       </main>
+
+      <div id="Message" class="popUpMessage opacity-transition no-display">
+        <header>
+          <p>ALERTA</p>
+          <button class="quitBtn">X</button>
+        </header>
+        <contend class="contend"
+          ><p id="info">Añade un origen primero</p>
+          <button class="acceptBtn">Aceptar</button></contend
+        >
+      </div>
     </div>
 
     <script type="module" src="./src/main.js"></script>

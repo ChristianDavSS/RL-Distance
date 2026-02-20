@@ -163,3 +163,50 @@ option:disabled {
   font-style: italic;
   user-select: none;
 }
+
+.popUpMessage {
+  background-color: #ffffff;
+  border: 2px solid #9c9c9c;
+  color: #464646;
+  border-radius: 5px;
+  padding: 6px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  place-self: center;
+  margin-top: 30vh;
+  transition: opacity 0.5s;
+}
+.opacity-transition {
+  opacity: 0%;
+}
+.no-display {
+  transform: translateX(150vw);
+}
+.popUpMessage header {
+  display: flex;
+}
+header .quitBtn {
+  margin-left: auto;
+  width: fit-content;
+  background-color: none;
+  border: none;
+}
+.contend {
+  display: flex;
+  margin-top: 10px;
+}
+.acceptBtn {
+  background-color: rgb(76, 76, 195);
+  color: white;
+  border: none;
+  padding: 5px;
+  border-radius: 4px;
+
+  margin-left: auto;
+  width: fit-content;
+}
+.acceptBtn:hover {
+  background-color: rgb(56, 56, 141);
+}
